@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Alpine Js Crash Course</title>
+    <style>
+        [x-cloak]{
+            display: none;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- x-data -->
+    <div x-data="{
+        message: 'I Love Alpine',
+        isOpen: false,
+        search: '',
+        name: null,
+        age: null,
+        names: [
+            {
+                name: 'David',
+                age: 20
+            },
+            {
+                name: 'Demo',
+                age: 22
+            },
+            {
+                name: 'Clair',
+                age: 18
+            }
+        ]
+    }">
+    
+        <!-- x-text -->
+        <h1 class="text-3xl text-center font-bold my-8">Hello Alpine</h1>
+        <p x-text="message"></p>
+
+        <div class="my-12 w-2/5 mx-20 space-y-4">
+            <!-- x-bind -->
+            <button
+                x-bind:class="isOpen ? 'bg-blue-400' : 'bg-green-400'"
+                class="px-3 py-2 rounded-md"
+                @click="isOpen = !isOpen"
+            >
+                Toggle Me
+            </button>
+
+            <!-- x-show, x-cloak -->
+            <div class="container border rounded-md p-3" x-show="isOpen" x-cloak>
+                <p>
+                    This is modal inside alpine states
+                </p>
+            </div>
+
+            <!-- x-if -->
+            <template x-if="isOpen">
+                <div class="bg-blue-500 text-white rounded-md p-2 w-3/5">
+                    This will show also when toggle!
+                </div>
+            </template>
+            <br>
+
+            
+
+            <!-- x-model -->
+            <input type="text" class="border focus:border-blue-300 rounded px-2 py-3" x-model="search">
+            <p>
+                The value you typed is : <span x-text="search"></span>
+            </p>
+            <br>
+
+
+            <!-- @click, x-effect -->
+            <input type="text" class="border focus:border-blue-300 rounded px-2 py-3" x-model="name">
+            <input type="number" class="border focus:border-blue-300 rounded px-2 py-3" x-model="age">
+            <button class="p-2 rounded-md bg-orange-500 hover:bg-orange-600 text-white" @click="
+                names.push({name, age})
+                name = ''
+                age = ''
+            " x-effect="console.log(name)">Add Name</button>
+
+            <!-- x-for -->
+            <template x-for="item in names">
+                <div class="px-2 py-3 rounded-md bg-gray-300 hover:bg-gray-400">
+                    <h2 class="text-xl font-bold">
+                        <span x-text="item.name"></span>
+                        -
+                        <span x-text="item.age"></span>
+                    </h2>
+                </div>
+            </template>
+
+            <!-- x-ref, $refs.name -->
+            <div class="p-3 rounded my-4" x-ref="test"></div>
+            <button class="p-2 rounded-md bg-orange-500 hover:bg-orange-600 text-white"
+                @click="$refs.test.innerText = 'New Component'"
+            >
+                Add Name
+            </button>
+
+            <!-- $el -->
+            <button class="p-2 rounded-md bg-orange-500 hover:bg-orange-600 text-white"
+                @click="
+                    $el.innerText = 'Changed Name'
+                    $el.setAttribute('data-id', 23)
+                "
+            >
+                Click to Change
+            </button>
+
+
+            <!-- x-html, x-init-->
+            <div
+                x-html="(await axios.get('./partial.html')).data"
+                x-init="console.log('This is fire when this div was initialized')"
+            >
+                Everything'll be overwrite inside the div.
+            </div>
+
+            <!-- $watch -->
+            <div x-init="$watch('names', value => console.log(value))"></div>
+
+            <!-- $dispatch('custom-event', { foo: 'bar' }) -->
+            <div @notify="alert('You have been notified!')">
+                <button class="bg-green-500 hover:bg-green-400 p-2 rounded font-bold" @click="$dispatch('notify')">
+                    Notify Me
+                </button>
+            </div>
+
+            <!-- $data -->
+            <button class="bg-red-200 hover:bg-red-400 p-2 rounded" @click="getLatestOne($data.names)">
+                Get latest
+            </button>
+
+            <div class="space-y-8">
+                <input x-mask="99/99/9999" placeholder="MM/DD/YYYY" class="p-3 border border-blue-400 focus:border-blue-500">
+                <input x-mask:dynamic="creditCardMask" class="p-3 border border-blue-400">
+            </div>
+        </div>
+
+        <footer>
+            <div class="p-4 bg-blue-300 rounded-t rounded-l text-center">
+                <p>Copyright &copy; <span x-text="new Date().getFullYear()"></span></p>
+            </div>
+        </footer>
+
+    </div>
+
+
+    <!-- Plugins before core file -->
+
+    <!-- Alpine Plugins -->
+    <script defer src="https://unpkg.com/@alpinejs/mask@3.x.x/dist/cdn.min.js"></script>
+
+    <!-- Alpine Core -->
+    <script src="//unpkg.com/alpinejs" defer></script>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.27.2/axios.min.js"></script>
+    <script>
+        function getLatestOne(names){
+            console.log(names.slice(1).pop());
+        }
+
+        function creditCardMask(input) {
+            return input.startsWith('34') || input.startsWith('37')
+                ? '9999 999999 99999'
+                : '9999 9999 9999 9999'
+        }
+
+    </script>
+</body>
+</html>

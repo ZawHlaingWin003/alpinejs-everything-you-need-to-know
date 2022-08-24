@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Alpine is cool</title>
+</head>
+<body>
+
+    <div id="teleport">
+        <p class="text-xl p-3">Text inside teleport</p>
+    </div>
+    <div class="max-w-lg mx-auto my-20">
+        <div class="text-center space-y-8">
+            <div class="space-y-4">
+                <h3 class="text-2xl text-blue-800 font-bold">x-teleport</h3>
+                <div x-data="{isOpen: false}">
+
+                    <div class="my-8 space-y-4">
+                        <button
+                            x-bind:class="isOpen ? 'bg-blue-400' : 'bg-green-400'"
+                            class="px-3 py-2 rounded-md"
+                            @click="isOpen = !isOpen"
+                        >
+                            Toggle Me
+                        </button>
+            
+                        <!-- this template'll teleport to undermost of div#teleport -->
+                        <template x-teleport='#teleport'>
+                            <div class="border rounded-md p-3" x-show="isOpen" x-cloak>
+                                <p>
+                                    This is modal inside alpine states
+                                </p>
+                            </div>
+                        </template>
+                    </div>
+            
+                </div>
+            </div>
+            <div class="space-y-4">
+                <h3 class="text-2xl text-blue-800 font-bold">$id</h3>
+                <div x-data="{
+                    fruits: [
+                        {
+                            id: 3,
+                            name: 'Apple'
+                        },
+                        {
+                            id: 4,
+                            name: 'Orange'
+                        },
+                        {
+                            id: 5,
+                            name: 'Banana'
+                        }
+                    ]
+                }">
+                    <form action="#" class="text-left space-y-8">
+                        <div class="form-group" x-id="['input']">
+                            <label :for="$id('input')">First</label>
+                            <input type="text" class="block p-3 border border-blue-400" :id="$id('input')">
+                        </div>
+                        <div class="form-group" x-id="['input']">
+                            <label :for="$id('input')">Second</label>
+                            <input type="text" class="block p-3 border border-blue-400" :id="$id('input')">
+                        </div>
+                        <div class="form-group" x-id="['input']">
+                            <label :for="$id('input')">Third</label>
+                            <input type="text" class="block p-3 border border-blue-400" :id="$id('input')">
+                        </div>
+                    </form>
+                    <div class="flex gap-8 my-8">
+                        <template x-for="fruit in fruits">
+                            <div class="border border-gray-800 p-2 rounded-sm">
+                                <p x-text="fruit.name" :id="$id('fruit', fruit.id)"></p>
+                            </div>
+                        </template>
+                    </div>
+                </div>
+            </div>
+            <div class="space-y-4">
+                <h3 class="text-2xl text-blue-800 font-bold">$data</h3>
+                <div x-data="{
+                    greeting: 'Hello',
+                    name: 'David',
+                    extra: 'No Important Data'
+                }">
+                    <select x-model="greeting" class="p-3 border border-blue-300 rounded">
+                        <option value="Hello">Hello</option>
+                        <option value="Hiii">Hiii</option>
+                        <option value="Bonjour">Bonjour</option>
+                        <option value="Mingalarpar">Mingalarpar</option>
+                    </select>
+                    <button @click="letGreet($data)" class="border border-purple-500 px-3 py-2 rounded hover:bg-purple-500 hover:text-white">Let's Greet</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Alpine Core -->
+    <script src="//unpkg.com/alpinejs" defer></script>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        // function letGreet(data){
+        //     alert(data.greeting+' '+data.name+' with '+data.extra)
+        // }
+
+        function letGreet({greeting, name}) { 
+            alert(greeting+ ' ' +name)
+        }
+    </script>
+</body>
+</html>
